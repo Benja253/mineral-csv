@@ -1,9 +1,11 @@
 import Papa from 'papaparse'
-import { readFileSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import path from 'node:path'
 import { limpiarLod, ordenarValores, recaudarColumnas } from './utils/modules.js'
 
 // Leer archivo csv
-const textFile = readFileSync('ejemplo_info_minerales.csv', "utf-8")
+const path_input = process.env.INPUT ?? 'input.csv'
+const textFile = readFileSync(path_input, "utf-8")
 
 // Converstir texto en javascript
 const info = Papa.parse(textFile, {
@@ -23,4 +25,7 @@ const infoFinal = Papa.unparse(dataOrdenada, {
   header: false,
 })
 
-writeFileSync('info_mineral_limpio.csv', infoFinal, 'utf-8')
+mkdirSync("output", { recursive: true });
+const outFilePath = path.join('output','info_mineral_limpio.csv')
+
+writeFileSync(outFilePath, infoFinal, 'utf-8')
