@@ -30,4 +30,4 @@ const outFilePath = path.join('output','info_mineral_limpio.csv')
 
 writeFileSync(outFilePath, infoFinal, 'utf-8')
 
-console.log('Se ejecutó todo correctamente. El archivo está en /output/info_minerales_limpio.cvs')
+console.log('Se ejecutó todo correctamente. El archivo está en /output/info_minerales_limpio.csv')
