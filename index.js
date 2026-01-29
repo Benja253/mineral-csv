@@ -28,8 +28,6 @@ const infoFinal = Papa.unparse(dataOrdenada, {
 mkdirSync("output", { recursive: true });
 const outFilePath = path.join('output','info_mineral_limpio.xlsx')
 
-
-
 await csvStringToXlsx(infoFinal, outFilePath);
 
 console.log('Se ejecutó todo correctamente. El archivo está en /output/info_minerales_limpio.csv')

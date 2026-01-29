@@ -13,7 +13,22 @@ export const recaudarColumnas = (arr) => {
     ...new Set(arr
       .filter(e => e[0].includes('File #'))
       .reduce((acc, cv) => [...acc, ...cv], []))  
-  ].filter(e => e.split(' ').at(-1) !== "Err")
+  ]
+  .filter(e => {
+    const el = e.toLowerCase()
+    return !(
+      e.split(' ').at(-1) == "Err" ||
+      el === 'cal check' ||
+      el.includes('alloy') ||
+      el.includes('field') ||
+      el.includes('method') ||
+      el.includes('match') ||
+      el.includes('application') ||
+      el.includes('time') ||
+      el.includes('name') ||
+      el === 'id'
+    )
+  })
 }
 
 // ordenar toda la información en la columna correspondiente
@@ -44,7 +59,8 @@ export const ordenarValores = (data, columnas) => {
 
 export const csvStringToXlsx = async(csvString, outputPath) => {
   const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet("Datos");
+  const worksheetPpm = workbook.addWorksheet("Datos-ppm");
+  const worksheetPercent = workbook.addWorksheet("Datos-%");
 
   // convertir CSV string → filas
   const rows = csvString
@@ -52,13 +68,24 @@ export const csvStringToXlsx = async(csvString, outputPath) => {
     .split(/\r?\n/)
     .map(line => line.split(","));
 
-  rows.forEach(row => worksheet.addRow(row));
+  rows.forEach(row => worksheetPpm.addRow(row));
+  rows.forEach(row => worksheetPercent.addRow(row));
 
-  // worksheet.eachRow({ includeEmpty: true }, (row) => {
-  //   row.eachCell({ includeEmpty: true }, (cell) => {
-  //     cell.value = cell.value.replaceAll(".", ",");
-  //   });
-  // });
+  worksheetPpm.eachRow({ includeEmpty: true }, (row) => {
+    row.eachCell({ includeEmpty: true }, (cell) => {
+      if(cell.row > 1 && cell.col > 1) {
+        cell.value *= 1
+      }
+    });
+  });
+
+  worksheetPercent.eachRow({ includeEmpty: true }, (row) => {
+    row.eachCell({ includeEmpty: true }, (cell) => {
+      if(cell.row > 1 && cell.col > 1) {
+        cell.value /= 10000
+      }
+    });
+  });
 
   await workbook.xlsx.writeFile(outputPath);
 }
