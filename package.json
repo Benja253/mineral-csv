@@ -12,9 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "exceljs": "^4.4.0",
     "papaparse": "5.5.3"
-  },
-  "devDependencies": {
-    "electron": "^40.0.0"
   }
 }

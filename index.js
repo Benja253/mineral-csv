@@ -1,7 +1,7 @@
 import Papa from 'papaparse'
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync } from 'node:fs'
 import path from 'node:path'
-import { limpiarLod, ordenarValores, recaudarColumnas } from './utils/modules.js'
+import { csvStringToXlsx, limpiarLod, ordenarValores, recaudarColumnas } from './utils/modules.js'
 
 // Leer archivo csv
 const path_input = process.env.INPUT ?? 'input.csv'
@@ -26,8 +26,10 @@ const infoFinal = Papa.unparse(dataOrdenada, {
 })
 
 mkdirSync("output", { recursive: true });
-const outFilePath = path.join('output','info_mineral_limpio.csv')
+const outFilePath = path.join('output','info_mineral_limpio.xlsx')
 
-writeFileSync(outFilePath, infoFinal, 'utf-8')
+
+
+await csvStringToXlsx(infoFinal, outFilePath);
 
 console.log('Se ejecutó todo correctamente. El archivo está en /output/info_minerales_limpio.csv')

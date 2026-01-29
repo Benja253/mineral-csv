@@ -1,7 +1,9 @@
+import ExcelJS from "exceljs";
+
 // Limpiar de LOD, quitar espacios de los costados, reemplazar '.' por ','
 export const limpiarLod = (obj) => {
   return obj.data.map(row => {
-    return row.map(e => e === "< LOD" ? '0' : e.trim().replace('.', ','))
+    return row.map(e => (e === "< LOD" || e === '0') ? '0.0' : e.trim())
   })
 }
 
@@ -30,12 +32,33 @@ export const ordenarValores = (data, columnas) => {
     for (const nombreColumna of columnas) {
       const index = cabeceraActual.indexOf(nombreColumna)
       if(index !== -1) {
-        row[index] === '' ? arrPivot.push('0') : arrPivot.push(row[index])
+        row[index] === '' ? arrPivot.push('0.0') : arrPivot.push(row[index])
       } else {
-        arrPivot.push('0')
+        arrPivot.push('0.0')
       }
     }
     arrFinal.push(arrPivot)
   }
   return arrFinal
+}
+
+export const csvStringToXlsx = async(csvString, outputPath) => {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet("Datos");
+
+  // convertir CSV string → filas
+  const rows = csvString
+    .trim()
+    .split(/\r?\n/)
+    .map(line => line.split(","));
+
+  rows.forEach(row => worksheet.addRow(row));
+
+  // worksheet.eachRow({ includeEmpty: true }, (row) => {
+  //   row.eachCell({ includeEmpty: true }, (cell) => {
+  //     cell.value = cell.value.replaceAll(".", ",");
+  //   });
+  // });
+
+  await workbook.xlsx.writeFile(outputPath);
 }
